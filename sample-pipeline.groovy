@@ -52,13 +52,24 @@ pipeline {
         
         success {
             echo "Pipeline job ${env.JOB_NAME} failed, marked as SUCCESS"
-            publishHTML([allowMissing: true, alwaysLinkToLastBuild: false, keepAll: false, reportDir: '.', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: 'HTML Report of successful job execution'])
-            archiveArtifacts allowEmptyArchive: true, artifacts: 'index.html', followSymlinks: false
+            
             // clean up the workspace
             // TODO : uncomment deleteDir()
             
+            // publish HTML report and archive
+            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: "HTML Report Directory", reportFiles: 'html-file_name', reportName: 'HTML Report', reportTitles: 'HTML Report of successful job execution'])
+            archiveArtifacts allowEmptyArchive: true, artifacts: 'index.html', followSymlinks: false
+
             // send status to github
             // TODO
+            try {
+                echo "Trying to send the job status to GitHub"
+                githubNotify context: 'Notification key', description: 'This is a shorted example',  status: 'SUCCESS'
+
+            } catch (Exception e) {
+                echo 'Exception occurred while trying to send the status: ' + e.toString()
+            }
+            
         }
         
         unstable {
