@@ -11,9 +11,9 @@ pipeline {
                 git branch: 'main',
                     credentialsId: 'matuszewski-gh-pat',
                     url: 'https://github.com/matuszewski/python-classifiers.git'
-                //sh "python main.py"
+                sh "python classifiers.py"
                 echo 'Build'
-                sh "echo $ref"
+                //sh "echo $ref"
             }
         }
         
