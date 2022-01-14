@@ -1,6 +1,27 @@
 pipeline {
     agent { label 'docker-slave' }
+    
+    triggers {
+        GenericTrigger(
+         genericVariables: [
+          [key: 'ref', value: '$.ref']
+         ],
 
+         causeString: 'Triggered on $ref',
+
+         token: '',
+         tokenCredentialId: '',
+
+         printContributedVariables: true,
+         printPostContent: true,
+
+         silentResponse: false,
+
+         regexpFilterText: '$ref',
+         regexpFilterExpression: 'refs/heads/' + BRANCH_NAME
+        )
+    }
+    
     stages {
         
         stage('Checkout from GitHub') {
@@ -9,7 +30,9 @@ pipeline {
                 git branch: 'main',
                     credentialsId: 'matuszewski-gh-pat',
                     url: 'https://github.com/matuszewski/python-classifiers.git'
-                sh "python main.py"
+                //sh "python main.py"
+                echo 'Build'
+                sh "echo $ref"
             }
         }
         
