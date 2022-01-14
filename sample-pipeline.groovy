@@ -9,8 +9,8 @@ pipeline {
 
          causeString: 'Triggered on $ref',
 
-         token: '',
-         tokenCredentialId: '',
+         token: '323fbap144',
+         tokenCredentialId: 'matuszewski-gh-pat',
 
          printContributedVariables: true,
          printPostContent: true,
@@ -18,7 +18,7 @@ pipeline {
          silentResponse: false,
 
          regexpFilterText: '$ref',
-         regexpFilterExpression: 'refs/heads/' + BRANCH_NAME
+         regexpFilterExpression: 'refs/heads/main'
         )
     }
     
