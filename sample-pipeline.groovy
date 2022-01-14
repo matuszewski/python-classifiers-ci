@@ -10,7 +10,7 @@ pipeline {
          causeString: 'Triggered on $ref',
 
          token: '323fbap144',
-         tokenCredentialId: 'matuszewski-gh-pat',
+         //tokenCredentialId: 'matuszewski-gh-pat',
 
          printContributedVariables: true,
          printPostContent: true,
