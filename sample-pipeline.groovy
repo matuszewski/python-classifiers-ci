@@ -4,14 +4,24 @@ pipeline {
    
     
     stages {
-        
+        stage('Check config') {
+            steps {
+                // check python version
+                sh 'python --version'
+                sh 'python3 --version'
+
+                // check pip version
+                sh 'pip --version'
+                
+            }
+        }
         stage('Checkout from GitHub') {
             steps {
                 echo '[>] Trying to checkout from git repository...'
                 git branch: 'main',
                     credentialsId: 'matuszewski-gh-pat',
                     url: 'https://github.com/matuszewski/python-classifiers.git'
-                sh "python classifiers.py"
+                sh "python3 classifiers.py"
                 echo 'Build'
                 //sh "echo $ref"
             }
