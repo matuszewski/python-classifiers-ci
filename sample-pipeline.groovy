@@ -1,7 +1,8 @@
 pipeline {
-    agent { label 'docker-slave' }
     
-   
+    agent {
+        label 'docker-slave'
+    }
     
     stages {
         stage('Check config') {
@@ -11,19 +12,18 @@ pipeline {
                 sh 'python3 --version'
 
                 // check pip version
-                sh 'pip --version'
-                
+                sh 'pip --version' 
             }
         }
+        
         stage('Checkout from GitHub') {
             steps {
                 echo '[>] Trying to checkout from git repository...'
                 git branch: 'main',
                     credentialsId: 'matuszewski-gh-pat',
                     url: 'https://github.com/matuszewski/python-classifiers.git'
+                
                 sh "python3 classifiers.py"
-                echo 'Build'
-                //sh "echo $ref"
             }
         }
         
@@ -33,38 +33,47 @@ pipeline {
             }
         }
         
-        stage('Functional tests') {
+        stage('PyLint Test') {
             steps {
-                echo '[>] Starting functional testing...'
+                echo '[>] Starting PyLint testing...'
+                
+                sh "pylint classifiers.py"
             }
         }
         
     }
+    
+    
     post {
+        
         always {
-            echo '[>] ------------ DONE ------------ '
-            
+            echo "JOB FINISHED"
         }
+        
         success {
-            echo '[>] Result: successful'
+            echo "Pipeline job ${env.JOB_NAME} failed, marked as SUCCESS"
             publishHTML([allowMissing: true, alwaysLinkToLastBuild: false, keepAll: false, reportDir: '.', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: 'HTML Report of successful job execution'])
             archiveArtifacts allowEmptyArchive: true, artifacts: 'index.html', followSymlinks: false
             // clean up the workspace
             deleteDir()
         }
+        
         unstable {
-            echo '[!] Result: unstable'
+            echo "Pipeline job ${env.JOB_NAME} failed, marked as UNSTABLE"
         }
+        
         failure {
-            echo '[!] Result: failed'
+            echo "Pipeline job ${env.JOB_NAME} failed, marked as FAILURE"
             
             // send email notification
             //mail to: 'krzysiekmatuszewski@outlook.com',
             // subject: "Pipeline job failure: ${currentBuild.fullDisplayName}",
             // body: "Build URL: ${env.BUILD_URL}"
         }
+        
         changed {
-            echo '[>] Result: changed state'
+            echo 'Job changed state'
         }
+        
     }
 }
