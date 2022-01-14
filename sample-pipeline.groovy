@@ -62,12 +62,14 @@ pipeline {
 
             // send status to github
             // TODO
-            try {
-                echo "Trying to send the job status to GitHub"
-                githubNotify context: 'Notification key', description: 'This is a shorted example',  status: 'SUCCESS'
+            script {
+                try {
+                    echo "Trying to send the job status to GitHub"
+                    githubNotify context: 'Notification key', description: 'This is a shorted example',  status: 'SUCCESS'
 
-            } catch (Exception e) {
-                echo 'Exception occurred while trying to send the status: ' + e.toString()
+                } catch (Exception e) {
+                    echo 'Exception occurred while trying to send the status: ' + e.toString()
+                }
             }
             
         }
