@@ -4,6 +4,14 @@ pipeline {
         label 'docker-slave'
     }
     
+    parameters {
+        string(name: 'BRANCH', defaultValue: "main", description: "Please provide the branch name (only for manual, ad-hoc builds)")
+    }
+    
+    environment {
+        BRANCH="${GITHUB_PR_SOURCE_BRANCH ?: params.BRANCH}"
+    }
+    
     stages {
         stage('Check config') {
             steps {
@@ -13,17 +21,33 @@ pipeline {
 
                 // check pip version
                 sh 'pip --version' 
+                
+                // display env variable GITHUB_PR_SOURCE_BRANCH
+                echo "${GITHUB_PR_SOURCE_BRANCH}"
             }
         }
         
         stage('Checkout from GitHub') {
             steps {
-                echo '[>] Trying to checkout from git repository...'
+                
+                echo 'Trying to checkout from git repository...'
                 git branch: 'main',
                     credentialsId: 'matuszewski-gh-pat',
                     url: 'https://github.com/matuszewski/python-classifiers.git'
                 
+                echo 'Trying to run classifiers.py...'
                 sh "python3 classifiers.py"
+            }
+        }
+        
+        stage('Info') {
+            steps {
+                // send job pending status to github
+                // -- with setGitHubPullRequestStatus plugin:
+                setGitHubPullRequestStatus context: "docker",
+                                           message: "${JOB_BASE_NAME} Build ${BUILD_NUMBER} build pending",
+                                           state: 'PENDING'
+                // NOTE! It must have some variable to link it with the PR, hence the environment section above^^^
             }
         }
         
@@ -62,16 +86,22 @@ pipeline {
 
             // send status to github
             // TODO
-            script {
-                try {
-                    echo "Trying to send the job status to GitHub"
-                    githubNotify context: 'Notification key', description: 'This is a shorted example',  status: 'SUCCESS'
+            //script {
+            //    try {
+            //        echo "Trying to send the job status to GitHub"
+            //        githubNotify context: 'Notification key', description: 'This is a shorted example',  status: 'SUCCESS'
 
-                } catch (Exception e) {
-                    echo 'Exception occurred while trying to send the status: ' + e.toString()
-                }
-            }
+            //    } catch (Exception e) {
+            //        echo 'Exception occurred while trying to send the status: ' + e.toString()
+            //    }
+            //}
             
+            //githubNotify account: 'raul-arabaolaza', context: 'Final Test', credentialsId: 'raul-github',
+  //  description: 'This is an example', repo: 'acceptance-test-harness', sha: '0b5936eb903d439ac0c0bf84940d73128d5e9487'
+  //  , status: 'SUCCESS', targetUrl: 'https://my-jenkins-instance.com'
+    
+            
+
         }
         
         unstable {
