@@ -55,20 +55,30 @@ pipeline {
             publishHTML([allowMissing: true, alwaysLinkToLastBuild: false, keepAll: false, reportDir: '.', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: 'HTML Report of successful job execution'])
             archiveArtifacts allowEmptyArchive: true, artifacts: 'index.html', followSymlinks: false
             // clean up the workspace
-            deleteDir()
+            // TODO : uncomment deleteDir()
+            
+            // send status to github
+            // TODO
         }
         
         unstable {
             echo "Pipeline job ${env.JOB_NAME} failed, marked as UNSTABLE"
+            
+            // send status to github
+            // TODO
         }
         
         failure {
             echo "Pipeline job ${env.JOB_NAME} failed, marked as FAILURE"
             
             // send email notification
+            // TODO : setup SMTP server on vm/docker
             //mail to: 'krzysiekmatuszewski@outlook.com',
             // subject: "Pipeline job failure: ${currentBuild.fullDisplayName}",
             // body: "Build URL: ${env.BUILD_URL}"
+            
+            // send status to github
+            // TODO
         }
         
         changed {
