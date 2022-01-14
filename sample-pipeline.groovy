@@ -47,7 +47,8 @@ pipeline {
         }
         success {
             echo '[>] Result: successful'
-            
+            publishHTML([allowMissing: true, alwaysLinkToLastBuild: false, keepAll: false, reportDir: '.', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: 'HTML Report of successful job execution'])
+            archiveArtifacts allowEmptyArchive: true, artifacts: 'index.html', followSymlinks: false
             // clean up the workspace
             deleteDir()
         }
