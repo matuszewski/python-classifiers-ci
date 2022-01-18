@@ -2,14 +2,14 @@ def updatePRStatus(String status) { // uses GitHub Integration Plugin https://ww
     switch(status) {
         case 'running':
             script {
-                gitHubPRStatus gitHubPRMessage("Jenkins job is running...")
+                gitHubPRStatus githubPRMessage("Jenkins job is running...")
             } // end of script
             break
         
         case 'success':
             script {
                 // Add a comment to GitHub PR
-                gitHubPRComment comment: gitHubPRMessage("<h2>Jenkins job ${JOB_NAME} ended with SUCCESS. Build: ${BUILD_URL}")
+                githubPRComment comment: githubPRMessage("<h2>Jenkins job ${JOB_NAME} ended with SUCCESS. Build: ${BUILD_URL}")
 
                 // Set status to GitHub PR check
                 githubPRStatusPublisher (
